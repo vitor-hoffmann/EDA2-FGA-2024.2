@@ -57,27 +57,42 @@ int pilhaVazia(Pilha* topo) {
 }
 
 // Função de percurso pré-ordem não-recursivo
-void pre_ordem(No* raiz) {
-    if (raiz == NULL) {
-        return;
-    }
-
+void em_ordem(No* raiz) {
     Pilha* pilha = NULL; // Inicializa a pilha
-    empilhar(&pilha, raiz);
+    No* atual = raiz;
 
-    while (!pilhaVazia(pilha)) {
-        // Remove o nó do topo da pilha e o processa
-        No* atual = desempilhar(&pilha);
+    while (!pilhaVazia(pilha) || atual != NULL) {
+        // Vai até o nó mais à esquerda
+        while (atual != NULL) {
+            empilhar(&pilha, atual);
+            atual = atual->esquerda;
+        }
+
+        // Processa o nó no topo da pilha
+        atual = desempilhar(&pilha);
         printf("%d ", atual->dado);
 
-        // Empilha o filho direito (primeiro a sair por ser pós-visitado)
-        if (atual->direita != NULL) {
-            empilhar(&pilha, atual->direita);
-        }
-
-        // Empilha o filho esquerdo (visitado primeiro)
-        if (atual->esquerda != NULL) {
-            empilhar(&pilha, atual->esquerda);
-        }
+        // Move para a subárvore direita
+        atual = atual->direita;
     }
+}
+
+int main() {
+    // Criando a árvore binária
+    No* raiz = criarNo(2);
+    raiz->esquerda = criarNo(5);
+    raiz->direita = criarNo(7);
+    raiz->esquerda->esquerda = criarNo(3);
+    raiz->esquerda->direita = criarNo(8);
+    raiz->esquerda->direita->esquerda = criarNo(4);
+    raiz->direita->esquerda = criarNo(1);
+    raiz->direita->esquerda->direita = criarNo(9);
+    raiz->direita->direita = criarNo(6);
+
+    // Percurso em pré-ordem não recursivo
+    printf("Percurso em pré-ordem (não recursivo): ");
+    em_ordem(raiz);
+    printf("\n");
+
+    return 0;
 }
